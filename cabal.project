@@ -1,0 +1,6 @@
+packages: .
+
+source-repository-package
+  type: git
+  location: https://github.com/andrewthad/wide-word
+  tag: ca9fbe1baf89d1ef2b32f4c6cc96b3c2cc439f5b
