@@ -26,3 +26,18 @@ library
   exposed-modules:
     Data.Set.Word8
     Data.Map.Word8
+
+test-suite test
+  default-language: Haskell2010
+  type: exitcode-stdio-1.0
+  hs-source-dirs: test
+  main-is: Main.hs
+  ghc-options: -Wall -O2
+  build-depends:
+    , base >=4.11.1 && <5
+    , byteslice
+    , byte-containers
+    , primitive
+    , quickcheck-classes >=0.6.4
+    , tasty
+    , tasty-quickcheck
