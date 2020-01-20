@@ -1,24 +1,35 @@
 cabal-version: 2.2
 name: byte-containers
 version: 0.1.0.0
--- synopsis:
--- description:
--- bug-reports:
+synopsis: Sets and maps with 8-bit words for keys
+description:
+  This library provides variant of `Data.Map` and `Data.Set` from
+  the `containers` library where the key is specialized to `Word8`.
+  Internally, this uses a 256-bit bitmask for the presence of keys
+  and a `SmallArray` of values of keys that were present. For example,
+  the map `{2 => Z, 3 => B, 5 => X, 9 => A}` would be repsented in
+  memory as:
+  .
+  > Bitmask: 0011010001000000... (240 more zero bits)
+  > Value Array: Z,B,X,A
+  .
+  This is optimized for reads. Lookup is `O(1)`. Union is technically
+  `O(1)` but only because the universe of keys is finite. The current
+  implementation always scans through all 256 bits of key space.
+bug-reports: https://github.com/byteverse/byte-containers
 license: BSD-3-Clause
 license-file: LICENSE
 author: Andrew Martin
 maintainer: andrew.thaddeus@gmail.com
 copyright: 2020 Andrew Martin
--- category:
+category: Data
 build-type: Simple
 extra-source-files: CHANGELOG.md
 
 library
-  -- other-modules:
-  -- other-extensions:
   build-depends:
     , base >=4.12 && <5
-    , wide-word
+    , wide-word >=0.1.0.9 && <0.2
     , primitive >=0.7 && <0.8
     , run-st >=0.1 && <0.2
   hs-source-dirs: src
