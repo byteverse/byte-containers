@@ -1,5 +1,6 @@
 {-# language BangPatterns #-}
 {-# language BlockArguments #-}
+{-# language DeriveFunctor #-}
 {-# language DerivingStrategies #-}
 {-# language StandaloneDeriving #-}
 {-# language TypeApplications #-}
@@ -33,6 +34,7 @@ data Map a = Map
   {-# UNPACK #-} !(SmallArray a)
 
 deriving stock instance Eq a => Eq (Map a)
+deriving stock instance Functor Map
 
 instance Show a => Show (Map a) where
   showsPrec p m = showsPrec p (toList m)
