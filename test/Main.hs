@@ -6,18 +6,14 @@
 
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
-import Control.Applicative (liftA3)
-import Data.Primitive (ByteArray)
 import Data.Proxy (Proxy(..))
 import Data.Map.Word8 (Map)
 import Data.Semigroup (Sum)
 import Data.Word (Word8)
 import Test.Tasty (defaultMain,testGroup,TestTree)
-import Test.Tasty.QuickCheck ((===),testProperty,property,Gen)
-import Test.Tasty.QuickCheck (Arbitrary,choose,vectorOf,forAll)
+import Test.Tasty.QuickCheck (Arbitrary,(===),testProperty)
 
 import qualified Data.Map.Word8 as Map
-import qualified Data.Bytes as Bytes
 import qualified Data.List as List
 import qualified Test.QuickCheck.Classes as QCC
 import qualified Test.Tasty.QuickCheck as TQC
