@@ -4,6 +4,7 @@
 module Data.Set.Word8
   ( Set
   , member
+  , empty
   , singleton
   , union
   ) where
@@ -20,6 +21,9 @@ import qualified Data.Primitive as PM
 
 -- | A map whose keys are 8-bit words.
 newtype Set = Set Word256
+
+empty :: Set
+empty = Set 0
 
 singleton :: Word8 -> Set
 singleton !k = Set (bit (fromIntegral @Word8 @Int k))

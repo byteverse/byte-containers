@@ -8,6 +8,7 @@
 module Data.Map.Word8
   ( Map
   , lookup
+  , empty
   , singleton
   , union
   , unionWith
