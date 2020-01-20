@@ -48,6 +48,7 @@ tests = testGroup "byte-containers"
     , lawsToTest (QCC.semigroupLaws (Proxy :: Proxy (Map [Integer])))
     , lawsToTest (QCC.monoidLaws (Proxy :: Proxy (Map [Integer])))
     , lawsToTest (QCC.commutativeMonoidLaws (Proxy :: Proxy (Map (Sum Integer))))
+    , lawsToTest (QCC.functorLaws (Proxy :: Proxy Map))
     ]
   ]
 
