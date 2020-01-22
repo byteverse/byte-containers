@@ -29,7 +29,7 @@ extra-source-files: CHANGELOG.md
 library
   build-depends:
     , base >=4.12 && <5
-    , wide-word >=0.1.0.9 && <0.2
+    , wide-word >=0.1.1 && <0.2
     , primitive >=0.7 && <0.8
     , run-st >=0.1 && <0.2
   hs-source-dirs: src
