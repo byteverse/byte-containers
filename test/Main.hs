@@ -48,11 +48,10 @@ tests = testGroup "byte-containers"
     , lawsToTest (QCC.functorLaws (Proxy :: Proxy Map))
     ]
   , testGroup "insert"
-    [ testProperty "replaces" $ \k v' alist ->
-      let a = Map.fromList alist :: Map Word
+    [ testProperty "replaces" $ \k v v' alist ->
+      let a = Map.insert k v (Map.fromList alist) :: Map Word
           a' = Map.insert k v' a
-        in if | Just v <- Map.lookup k a
-              , v /= v'
+        in if | v /= v'
                 -> Map.lookup k a' === Just v'
               | otherwise -> property Discard
     ]
