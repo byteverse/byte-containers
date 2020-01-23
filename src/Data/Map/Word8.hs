@@ -136,6 +136,11 @@ unionWith g !ma@(Map ksA vsA) !mb@(Map ksB vsB)
 insert :: Word8 -> a -> Map a -> Map a
 insert = insertWith const
 
+-- | Insert with a function, combining new value and old value.
+-- @'insertWith' f key value mp@ will insert the pair @(key, value)@ into @mp@
+-- if @key@ does not exist in the map.
+-- If the key does exist, the function will insert the pair
+-- @(key, f new_value old_value)@.
 insertWith :: (a -> a -> a) -> Word8 -> a -> Map a -> Map a
 insertWith f k v m = unionWith f (singleton k v) m
 
