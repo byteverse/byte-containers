@@ -8,6 +8,9 @@
 module Data.Map.Word8
   ( Map
   , lookup
+  , null
+  , size
+  , empty
   , singleton
   , union
   , unionWith
@@ -16,7 +19,7 @@ module Data.Map.Word8
   , fromList
   ) where
 
-import Prelude hiding (lookup)
+import Prelude hiding (lookup, null)
 
 import Control.Monad.ST.Run (runSmallArrayST)
 import Data.Bits (testBit,bit,unsafeShiftR,(.&.),(.|.),popCount)
@@ -48,6 +51,14 @@ instance Semigroup a => Monoid (Map a) where
 singleton :: Word8 -> a -> Map a
 singleton !k v = Map (bit (fromIntegral @Word8 @Int k))
   (runSmallArrayST (PM.newSmallArray 1 v >>= PM.unsafeFreezeSmallArray))
+
+-- | Is the passed map empty?
+null :: Map a -> Bool
+null m = size m == 0
+
+-- | The number of elements the passed map contains.
+size :: Map a -> Int
+size (Map keys _) = popCount keys
 
 -- | The empty map.
 empty :: Map a
