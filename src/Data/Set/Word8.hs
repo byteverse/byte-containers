@@ -9,17 +9,15 @@ module Data.Set.Word8
   , empty
   , singleton
   , union
+  , insert
   ) where
 
 import Prelude hiding (lookup,null)
 
-import Control.Monad.ST.Run (runSmallArrayST)
 import Data.Bits (testBit,bit,(.|.),popCount)
-import Data.Primitive (SmallArray)
 import Data.WideWord (Word256)
 import Data.Word (Word8)
 
-import qualified Data.Primitive as PM
 
 -- | A map whose keys are 8-bit words.
 newtype Set = Set Word256
@@ -44,3 +42,6 @@ member k (Set keys) =
 
 union :: Set -> Set -> Set
 union (Set x) (Set y) = Set (x .|. y)
+
+insert :: Word8 -> Set -> Set
+insert k s = union (singleton k) s

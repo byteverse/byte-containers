@@ -14,6 +14,8 @@ module Data.Map.Word8
   , singleton
   , union
   , unionWith
+  , insert
+  , insertWith
   , foldrWithKeys
   , toList
   , fromList
@@ -130,6 +132,12 @@ unionWith g !ma@(Map ksA vsA) !mb@(Map ksB vsB)
       PM.unsafeFreezeSmallArray dst
       where
       ks = ksA .|. ksB
+
+insert :: Word8 -> a -> Map a -> Map a
+insert = insertWith const
+
+insertWith :: (a -> a -> a) -> Word8 -> a -> Map a -> Map a
+insertWith f k v m = unionWith f (singleton k v) m
 
 -- Internal function. This is strict in the accumulator.
 foldlZipBits256 :: Monad m

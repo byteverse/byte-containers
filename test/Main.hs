@@ -15,6 +15,7 @@ import Data.Word (Word8)
 import Test.Tasty (defaultMain,testGroup,TestTree)
 import Test.Tasty.QuickCheck ((===),testProperty,property,Gen)
 import Test.Tasty.QuickCheck (Arbitrary,choose,vectorOf,forAll)
+import Test.Tasty.QuickCheck (Discard(Discard))
 
 import qualified Data.Map.Word8 as Map
 import qualified Data.Bytes as Bytes
@@ -49,6 +50,15 @@ tests = testGroup "byte-containers"
     , lawsToTest (QCC.monoidLaws (Proxy :: Proxy (Map [Integer])))
     , lawsToTest (QCC.commutativeMonoidLaws (Proxy :: Proxy (Map (Sum Integer))))
     , lawsToTest (QCC.functorLaws (Proxy :: Proxy Map))
+    ]
+  , testGroup "insert"
+    [ testProperty "replaces" $ \k v' alist ->
+      let a = Map.fromList alist :: Map Word
+          a' = Map.insert k v' a
+        in if | Just v <- Map.lookup k a
+              , v /= v'
+                -> Map.lookup k a' === Just v'
+              | otherwise -> property Discard
     ]
   ]
 
