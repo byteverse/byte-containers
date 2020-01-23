@@ -8,16 +8,20 @@
 module Data.Map.Word8
   ( Map
   , lookup
+  , null
+  , size
   , empty
   , singleton
   , union
   , unionWith
+  , insert
+  , insertWith
   , foldrWithKeys
   , toList
   , fromList
   ) where
 
-import Prelude hiding (lookup)
+import Prelude hiding (lookup, null)
 
 import Control.Monad.ST.Run (runSmallArrayST)
 import Data.Bits (testBit,bit,unsafeShiftR,(.&.),(.|.),popCount)
@@ -49,6 +53,14 @@ instance Semigroup a => Monoid (Map a) where
 singleton :: Word8 -> a -> Map a
 singleton !k v = Map (bit (fromIntegral @Word8 @Int k))
   (runSmallArrayST (PM.newSmallArray 1 v >>= PM.unsafeFreezeSmallArray))
+
+-- | Is the passed map empty?
+null :: Map a -> Bool
+null m = size m == 0
+
+-- | The number of elements the passed map contains.
+size :: Map a -> Int
+size (Map keys _) = popCount keys
 
 -- | The empty map.
 empty :: Map a
@@ -120,6 +132,17 @@ unionWith g !ma@(Map ksA vsA) !mb@(Map ksB vsB)
       PM.unsafeFreezeSmallArray dst
       where
       ks = ksA .|. ksB
+
+insert :: Word8 -> a -> Map a -> Map a
+insert = insertWith const
+
+-- | Insert with a function, combining new value and old value.
+-- @'insertWith' f key value mp@ will insert the pair @(key, value)@ into @mp@
+-- if @key@ does not exist in the map.
+-- If the key does exist, the function will insert the pair
+-- @(key, f new_value old_value)@.
+insertWith :: (a -> a -> a) -> Word8 -> a -> Map a -> Map a
+insertWith f k v m = unionWith f (singleton k v) m
 
 -- Internal function. This is strict in the accumulator.
 foldlZipBits256 :: Monad m

@@ -11,7 +11,8 @@ import Data.Map.Word8 (Map)
 import Data.Semigroup (Sum)
 import Data.Word (Word8)
 import Test.Tasty (defaultMain,testGroup,TestTree)
-import Test.Tasty.QuickCheck (Arbitrary,(===),testProperty)
+import Test.Tasty.QuickCheck ((===),testProperty,property)
+import Test.Tasty.QuickCheck (Arbitrary,Discard(Discard))
 
 import qualified Data.Map.Word8 as Map
 import qualified Data.List as List
@@ -45,6 +46,14 @@ tests = testGroup "byte-containers"
     , lawsToTest (QCC.monoidLaws (Proxy :: Proxy (Map [Integer])))
     , lawsToTest (QCC.commutativeMonoidLaws (Proxy :: Proxy (Map (Sum Integer))))
     , lawsToTest (QCC.functorLaws (Proxy :: Proxy Map))
+    ]
+  , testGroup "insert"
+    [ testProperty "replaces" $ \k v v' alist ->
+      let a = Map.insert k v (Map.fromList alist) :: Map Word
+          a' = Map.insert k v' a
+        in if | v /= v'
+                -> Map.lookup k a' === Just v'
+              | otherwise -> property Discard
     ]
   ]
 
