@@ -1,9 +1,12 @@
 {-# language BangPatterns #-}
+{-# language BinaryLiterals #-}
 {-# language BlockArguments #-}
 {-# language DeriveFunctor #-}
 {-# language DerivingStrategies #-}
+{-# language MagicHash #-}
 {-# language StandaloneDeriving #-}
 {-# language TypeApplications #-}
+{-# language UnboxedTuples #-}
 
 module Data.Map.Word8
   ( Map
@@ -24,9 +27,9 @@ module Data.Map.Word8
 import Prelude hiding (lookup, null)
 
 import Control.Monad.ST.Run (runSmallArrayST)
-import Data.Bits (testBit,bit,unsafeShiftR,(.&.),(.|.),popCount)
+import Data.Bits (testBit,bit,unsafeShiftR,unsafeShiftL,(.&.),(.|.),popCount)
 import Data.Primitive (SmallArray)
-import Data.WideWord (Word256)
+import Data.WideWord (Word256(Word256))
 import Data.Word (Word8)
 
 import qualified Data.Foldable as F
@@ -68,13 +71,45 @@ empty = Map 0 mempty
 
 -- | Lookup the value at a key in the map.
 lookup :: Word8 -> Map a -> Maybe a
-lookup kw (Map keys vals) = case testBit keys k of
-  False -> Nothing
-  True -> case k of
-    0 -> Just (PM.indexSmallArray vals 0)
-    _ -> 
-      let ix = popCount (unsafeShiftR maxBound (256 - k) .&. keys)
-       in Just (PM.indexSmallArray vals ix)
+lookup kw (Map keys@(Word256 ksD ksC ksB ksA) vals)
+  | k .&. 0b00111111 == 0 = case fromIntegral @Int @Word (unsafeShiftR k 6) of
+      0 | testBit ksA 0, (# r #) <- PM.indexSmallArray## vals 0 -> Just r
+        | otherwise -> Nothing
+      1 | testBit ksB 0, (# r #) <- PM.indexSmallArray## vals (popCount ksA) -> Just r
+        | otherwise -> Nothing
+      2 | testBit ksC 0, (# r #) <- PM.indexSmallArray## vals (popCount ksA + popCount ksB) -> Just r
+        | otherwise -> Nothing
+      _ | testBit ksD 0, (# r #) <- PM.indexSmallArray## vals (popCount ksA + popCount ksB + popCount ksC) -> Just r
+        | otherwise -> Nothing
+  | otherwise = case fromIntegral @Int @Word (unsafeShiftR k 6) of
+      0 -> case testBit ksA k of
+        False -> Nothing
+        True -> case PM.indexSmallArray## vals (popCount (unsafeShiftL ksA (64 - k))) of
+          (# r #) -> Just r
+      1 -> case testBit ksB (k - 64) of
+        False -> Nothing
+        True -> 
+          let pca = popCount ksA
+              pcb = popCount (unsafeShiftL ksB (128 - k))
+           in case PM.indexSmallArray## vals (pca + pcb) of
+                (# r #) -> Just r
+      2 -> case testBit ksC (k - 128) of
+        False -> Nothing
+        True -> 
+          let pca = popCount ksA
+              pcb = popCount ksB
+              pcc = popCount (unsafeShiftL ksC (192 - k))
+           in case PM.indexSmallArray## vals (pca + pcb + pcc) of
+                (# r #) -> Just r
+      _ -> case testBit ksD (k - 192) of
+        False -> Nothing
+        True ->
+          let pca = popCount ksA
+              pcb = popCount ksB
+              pcc = popCount ksC
+              pcd = popCount (unsafeShiftL ksD (256 - k))
+           in case PM.indexSmallArray## vals (pca + pcb + pcc + pcd) of
+                (# r #) -> Just r
   where
   k = fromIntegral @Word8 @Int kw
 
