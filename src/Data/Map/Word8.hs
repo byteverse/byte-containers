@@ -17,6 +17,7 @@ module Data.Map.Word8
   , insert
   , insertWith
   , foldrWithKeys
+  , foldl'
   , toList
   , fromList
   ) where
@@ -177,6 +178,10 @@ foldrWithKeys g b0 (Map ks vs) = go 0 0
         (PM.indexSmallArray vs ixVal)
         (go (ix + 1) (ixVal + 1))
       False -> go (ix + 1) ixVal
+
+foldl' :: (b -> a -> b) -> b -> Map a -> b
+{-# inline foldl' #-}
+foldl' f b0 (Map _ vs) = F.foldl' f b0 vs
 
 toList :: Map a -> [(Word8,a)]
 toList = foldrWithKeys (\k v b -> (k,v) : b) []
