@@ -18,6 +18,7 @@ module Data.Map.Word8
   , insertWith
   , foldrWithKeys
   , foldl'
+  , traverse_
   , toList
   , fromList
   ) where
@@ -182,6 +183,10 @@ foldrWithKeys g b0 (Map ks vs) = go 0 0
 foldl' :: (b -> a -> b) -> b -> Map a -> b
 {-# inline foldl' #-}
 foldl' f b0 (Map _ vs) = F.foldl' f b0 vs
+
+traverse_ :: Applicative m => (a -> m b) -> Map a -> m ()
+{-# inline traverse_ #-}
+traverse_ f (Map _ vs) = F.traverse_ f vs
 
 toList :: Map a -> [(Word8,a)]
 toList = foldrWithKeys (\k v b -> (k,v) : b) []
