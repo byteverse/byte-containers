@@ -1,6 +1,6 @@
 cabal-version:   2.2
 name:            byte-containers
-version:         0.1.0.0
+version:         0.1.0.1
 synopsis:        Sets and maps with 8-bit words for keys
 description:
   This library provides variant of @Data.Map@ and @Data.Set@ from

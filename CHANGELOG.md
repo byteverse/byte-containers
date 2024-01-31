@@ -1,5 +1,9 @@
 # Revision history for byte-containers
 
-## 0.1.0.0 -- YYYY-mm-dd
+## 0.1.0.1 -- 2024-01-31
 
-* First version. Released on an unsuspecting world.
+* Fix changelog.
+
+## 0.1.0.0 -- 2024-01-31
+
+* First version.
