@@ -124,9 +124,9 @@ unionWith g !ma@(Map ksA vsA) !mb@(Map ksB vsB)
         ( \(!ix, !ixA, !ixB) a b -> case a of
             True -> case b of
               True -> do
-                a <- PM.indexSmallArrayM vsA ixA
-                b <- PM.indexSmallArrayM vsB ixB
-                let !c = g a b
+                a' <- PM.indexSmallArrayM vsA ixA
+                b' <- PM.indexSmallArrayM vsB ixB
+                let !c = g a' b'
                 PM.writeSmallArray dst ix c
                 pure (ix + 1, ixA + 1, ixB + 1)
               False -> do
@@ -175,8 +175,8 @@ foldlZipBits256 g !a0 !x !y = go 0 a0
       a' <- g a xval yval
       go (ix + 1) a'
 
-foldrBits256 :: (Word8 -> b -> b) -> b -> Word256 -> b
-foldrBits256 g b0 w = go 0
+_foldrBits256 :: (Word8 -> b -> b) -> b -> Word256 -> b
+_foldrBits256 g b0 w = go 0
  where
   go ix = case ix of
     256 -> b0
