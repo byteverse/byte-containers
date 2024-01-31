@@ -1,5 +1,5 @@
-{-# language BangPatterns #-}
-{-# language TypeApplications #-}
+{-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE TypeApplications #-}
 
 module Data.Set.Word8
   ( Set
@@ -12,12 +12,11 @@ module Data.Set.Word8
   , insert
   ) where
 
-import Prelude hiding (lookup,null)
+import Prelude hiding (lookup, null)
 
-import Data.Bits (testBit,bit,(.|.),popCount)
+import Data.Bits (bit, popCount, testBit, (.|.))
 import Data.WideWord (Word256)
 import Data.Word (Word8)
-
 
 -- | A map whose keys are 8-bit words.
 newtype Set = Set Word256
